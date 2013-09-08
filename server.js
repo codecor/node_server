@@ -1,20 +1,22 @@
 var http = require("http");
+var url = require("url");
 
 function dbg(out)
 {
     console.log(out);
 }
 
-function onRequest (request, response)
+function start(route, handle)
 {
-    dbg("Request received.");
-    response.writeHead(200, {"Content-Type":"text/plain"});
-    response.write("sup?");
-    response.end();
-}
+    function onRequest (request, response)
+    {
+        var pathname = url.parse(request.url).pathname;
+        dbg("Request received " + pathname +".");
 
-function start()
-{
+        route(handle,pathname,response);
+        response.end();
+    }
+
     http.createServer(onRequest).listen(8888,"0.0.0.0");
     dbg("server listening on 0.0.0.0:8888");
 }
